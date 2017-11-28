@@ -4,6 +4,7 @@
 #Description:Topical Word Embeddings TWE-3(This version is not the one used in the experiment, which needs the twe-1's result as an initial value)
 
 import gensim
+from gensim.models.word2vec import Word2Vec
 import sys
 
 def gen(filename, tmp="tmp"):
@@ -63,7 +64,7 @@ def train_twe3(wordmapfile, tassignfile, tmp="tmp", output="output"):
     id2word = load_wordmap(wordmapfile)
 
     print "Begin Training..."
-    w = gensim.models.Word2Vec(sentences, window=5, size=400, workers=4,
+    w = Word2Vec(sentences, window=5, size=400, workers=4,
                                word_number=word_number, topic_number=topic_number,
                                topic_size=400)
     print "Finish"
