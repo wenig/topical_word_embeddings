@@ -4,6 +4,7 @@
 #Description: Topical Word Embedding TWE-2
 
 import gensim
+from gensim.models.word2vec import LineSentence
 import sys
 
 def generate(input_filename, output_filename, logfile, id2word):
@@ -67,14 +68,14 @@ def gen(filename):
         s = [l.strip().split() for l in f]
     return s
 
-def train_twe2(wordmapfile, tassignfile):
+def train_twe2(wordmapfile, tassignfile, tmp="tmp", output="output"):
     word2id, id2word = load_wordmap(wordmapfile)
     print "Generate the temp file...",
-    generate(tassignfile, "tmp/train.txt", "output/log.txt", id2word)
+    generate(tassignfile, "%s/train.txt" % tmp, "%s/log.txt" % output, id2word)
     print "finish!"
-    sentences = gensim.models.word2vec.LineSentence("tmp/train.txt")
+    sentences = LineSentence("%s/train.txt" % tmp)
     w = gensim.models.Word2Vec(sentences, size=400, workers=8)
-    w.save_word_vectors("output/vectors.txt")
+    w.save_word_vectors("%s/vectors.txt" % output)
 
 if __name__=="__main__":
     if len(sys.argv)!=3:
