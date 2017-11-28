@@ -9,23 +9,19 @@ import gensim #modified gensim version
 import pre_process # read the wordmap and the tassgin file and create the sentence
 import sys
 
-def train_twe1(wordmapfile, tassignfile, topic_number):
+def train_twe1(wordmapfile, tassignfile, topic_number, tmp="tmp", output="output"):
     id2word = pre_process.load_id2word(wordmapfile)
-    pre_process.load_sentences(tassignfile, id2word)
-    sentence_word = gensim.models.word2vec.LineSentence("tmp/word.file")
-    print
-    "Training the word vector..."
+    pre_process.load_sentences(tassignfile, id2word, tmp)
+    sentence_word = gensim.models.word2vec.LineSentence("%s/word.file" % tmp)
+    print "Training the word vector..."
     w = gensim.models.Word2Vec(sentence_word, size=400, workers=20)
-    sentence = gensim.models.word2vec.CombinedSentence("tmp/word.file", "tmp/topic.file")
-    print
-    "Training the topic vector..."
+    sentence = gensim.models.word2vec.CombinedSentence("%s/word.file" % tmp, "%s/topic.file" % tmp)
+    print "Training the topic vector..."
     w.train_topic(topic_number, sentence)
-    print
-    "Saving the topic vectors..."
-    w.save_topic("output/topic_vector.txt")
-    print
-    "Saving the word vectors..."
-    w.save_wordvector("output/word_vector.txt")
+    print "Saving the topic vectors..."
+    w.save_topic("%s/topic_vector.txt" % output)
+    print "Saving the word vectors..."
+    w.save_wordvector("%s/word_vector.txt" % output)
 
 
 if __name__=="__main__":

@@ -21,11 +21,11 @@ def load_id2word(wordmap):
     return id2word
 
 #load the topic assign
-def load_sentences(topic_assign, id2word):
+def load_sentences(topic_assign, id2word, tmp="tmp"):
     sentence_word = []
     sentence_topic = []
-    topic_file = open("tmp/topic.file","w")
-    word_file = open("tmp/word.file","w")
+    topic_file = open("%s/topic.file" % tmp,"w")
+    word_file = open("%s/word.file" % tmp,"w")
 
     with open(topic_assign) as f:
         for l in f:
