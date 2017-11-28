@@ -58,7 +58,7 @@ def load_wordmap(filename):
     return id2word
 
 def train_twe3(wordmapfile, tassignfile, tmp="tmp", output="output"):
-    topic_number, word_number = gen(tassignfile)
+    topic_number, word_number = gen(tassignfile, tmp)
     sentences = MyCorpus("%s/data.tmp" % tmp)
     id2word = load_wordmap(wordmapfile)
 
