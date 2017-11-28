@@ -6,6 +6,7 @@
 #Description Train the topic representation using the topic model and the word2vec's skip gram
 
 import gensim #modified gensim version
+from gensim.models.word2vec import CombinedSentence
 import pre_process # read the wordmap and the tassgin file and create the sentence
 import sys
 
@@ -15,7 +16,7 @@ def train_twe1(wordmapfile, tassignfile, topic_number, tmp="tmp", output="output
     sentence_word = gensim.models.word2vec.LineSentence("%s/word.file" % tmp)
     print "Training the word vector..."
     w = gensim.models.Word2Vec(sentence_word, size=400, workers=20)
-    sentence = gensim.models.word2vec.CombinedSentence("%s/word.file" % tmp, "%s/topic.file" % tmp)
+    sentence = CombinedSentence("%s/word.file" % tmp, "%s/topic.file" % tmp)
     print "Training the topic vector..."
     w.train_topic(topic_number, sentence)
     print "Saving the topic vectors..."
