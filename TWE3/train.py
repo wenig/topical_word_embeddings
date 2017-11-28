@@ -6,10 +6,10 @@
 import gensim
 import sys
 
-def gen(filename):
+def gen(filename, tmp="tmp"):
     content2id = {}
     cnt = 0
-    fout =open("tmp/data.tmp","w") 
+    fout =open("%s/data.tmp" % tmp,"w")
     max_word_number = 0
     max_topic_number =0
     with open(filename) as  f:
@@ -57,9 +57,9 @@ def load_wordmap(filename):
             id2word[number ]= word
     return id2word
 
-def train_twe3(wordmapfile, tassignfile):
+def train_twe3(wordmapfile, tassignfile, tmp="tmp", output="output"):
     topic_number, word_number = gen(tassignfile)
-    sentences = MyCorpus("tmp/data.tmp")
+    sentences = MyCorpus("%s/data.tmp" % tmp)
     id2word = load_wordmap(wordmapfile)
 
     print "Begin Training..."
@@ -68,9 +68,9 @@ def train_twe3(wordmapfile, tassignfile):
                                topic_size=400)
     print "Finish"
     print "Saving the word vector..."
-    w.save_word_vector("output/word_vector.txt", id2word)
+    w.save_word_vector("%s/word_vector.txt" % output, id2word)
     print "Saving the topic vector..."
-    w.save_topic_vector("output/topic_vector.txt")
+    w.save_topic_vector("%s/topic_vector.txt" % output)
 
 if __name__=="__main__":
     if len(sys.argv)!=3:
