@@ -974,6 +974,7 @@ class Word2Vec(utils.SaveLoad):
                 f.write("\n")
     def save_wordvector(self, filename):
         with open(filename,"w") as f:
+            print len(self.vocab)
             for w in self.vocab:
                 v = self[w]
                 now_line = str(w)
