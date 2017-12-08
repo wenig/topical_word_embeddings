@@ -14,9 +14,8 @@ def train_twe1(sentences, topics, topic_number, tmp="tmp", output="output"):
     #id2word = pre_process.load_id2word(wordmapfile)
     #pre_process.load_sentences(tassignfile, id2word, tmp)
     #sentence_word = gensim.models.word2vec.LineSentence("%s/word.file" % tmp)
-    sentence_word = [words.split() for words in sentences]
     print "Training the word vector..."
-    w = gensim.models.Word2Vec(sentence_word, size=400, workers=20)
+    w = gensim.models.Word2Vec(sentences, size=400, workers=20)
     sentence = [zip(sentence, topic) for sentence, topic in zip(sentences, topics)]
     print "Training the topic vector..."
     w.train_topic(topic_number, sentence)
