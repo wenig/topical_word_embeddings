@@ -7,31 +7,26 @@ import gensim
 from gensim.models.word2vec import Word2Vec
 import sys
 
-def gen(filename, tmp="tmp"):
+def gen(assigned, tmp="tmp"):
     content2id = {}
     cnt = 0
     fout =open("%s/data.tmp" % tmp,"w")
     max_word_number = 0
     max_topic_number =0
-    with open(filename) as  f:
-        for l in f:
-            words = l.strip().split()
-            for w in words:
-                word_number, topic_number = w.split(':')
-                word_number = int(word_number)
-                topic_number = int(topic_number)
-                if topic_number > max_topic_number:
-                    max_topic_number = topic_number
-                if word_number > max_word_number:
-                    max_word_number = word_number
-                if (word_number, topic_number) not in content2id:
-                    content2id[(word_number, topic_number)] = cnt
-                    now_id = cnt
-                    cnt+=1
-                else:
-                    now_id = content2id[(word_number, topic_number)]
-                print >>fout, word_number, topic_number, now_id,
-            print >>fout
+    for sent in assigned:
+        for word_number, topic_number in sent:
+            if topic_number > max_topic_number:
+                max_topic_number = topic_number
+            if word_number > max_word_number:
+                max_word_number = word_number
+            if (word_number, topic_number) not in content2id:
+                content2id[(word_number, topic_number)] = cnt
+                now_id = cnt
+                cnt+=1
+            else:
+                now_id = content2id[(word_number, topic_number)]
+            print >>fout, word_number, topic_number, now_id,
+        print >>fout
     fout.close()
     max_word_number +=1
     max_topic_number +=1
@@ -58,10 +53,9 @@ def load_wordmap(filename):
             id2word[number ]= word
     return id2word
 
-def train_twe3(wordmapfile, tassignfile, tmp="tmp", output="output"):
-    topic_number, word_number = gen(tassignfile, tmp)
+def train_twe3(id2word, assigned, tmp="tmp", output="output"):
+    topic_number, word_number = gen(assigned, tmp)
     sentences = MyCorpus("%s/data.tmp" % tmp)
-    id2word = load_wordmap(wordmapfile)
 
     print "Begin Training..."
     w = Word2Vec(sentences, window=5, size=400, workers=4,
