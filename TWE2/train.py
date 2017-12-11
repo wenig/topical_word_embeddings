@@ -7,49 +7,45 @@ import gensim
 from gensim.models.word2vec import LineSentence
 import sys
 
-def generate(input_filename, output_filename, logfile, id2word):
+def generate(input, output_filename, logfile, id2word):
     word_label = 0
     content2id = {}
     id2content = {}
     id2number = {}
-    with open(input_filename) as input:
-        with open(output_filename,"w") as output:
-            with open(logfile, "w") as log:
-                for l in input:
-                    words = l.strip().split()
-                    for w in words:
-                        word_number, topic_number = w.split(':')
-                        word_number = int(word_number)
-                        topic_number = int(topic_number)
-                        if (word_number, topic_number) not in content2id:
-                            content2id[(word_number, topic_number)] = word_label
-                            id2content[word_label] = (word_number, topic_number)
-                            word_label +=1
-                        now_id = content2id[(word_number, topic_number)]
-                        print >>output, now_id,
-                        if now_id not in id2number:
-                            id2number[now_id] = 1
-                        else:
-                            id2number[now_id]+=1
-                    print>>output
-                #generate the logfile
-                res = []
-                for (k, v) in content2id.items():
-                    word_number = k[0]
-                    topic_number = k[1]
-                    content_id = v
-                    if word_number not in id2word:
-                        continue
-                    word = id2word[word_number]
-                    if content_id not in id2number:
-                        continue
-                    freq = id2number[content_id]
-                    res.append((word, word_number, topic_number, content_id, freq))
-                    
-                res = sorted(res, cmp=lambda x, y:(-cmp(x[4], y[4])))
-                for (word, word_number, topic_number, content_id, freq) in res:
-                    print >> log, word, word_number, topic_number, content_id, freq
+    with open(output_filename,"w") as output:
+        with open(logfile, "w") as log:
+            for sent in input:
+                for word_number, topic_number in sent:
+                    if (word_number, topic_number) not in content2id:
+                        content2id[(word_number, topic_number)] = word_label
+                        id2content[word_label] = (word_number, topic_number)
+                        word_label +=1
+                    now_id = content2id[(word_number, topic_number)]
+                    print >>output, now_id,
+                    if now_id not in id2number:
+                        id2number[now_id] = 1
+                    else:
+                        id2number[now_id]+=1
+                print>>output
+            #generate the logfile
+            res = []
+            for (k, v) in content2id.items():
+                word_number = k[0]
+                topic_number = k[1]
+                content_id = v
+                if word_number not in id2word:
+                    continue
+                word = id2word[word_number]
+                if content_id not in id2number:
+                    continue
+                freq = id2number[content_id]
+                res.append((word, word_number, topic_number, content_id, freq))
+
+            res = sorted(res, cmp=lambda x, y:(-cmp(x[4], y[4])))
+            for (word, word_number, topic_number, content_id, freq) in res:
+                print >> log, word, word_number, topic_number, content_id, freq
     return content2id, id2content, id2number
+
 def load_wordmap(word_map_filename):
     id2word = {}
     word2id = {}
@@ -68,10 +64,9 @@ def gen(filename):
         s = [l.strip().split() for l in f]
     return s
 
-def train_twe2(wordmapfile, tassignfile, tmp="tmp", output="output"):
-    word2id, id2word = load_wordmap(wordmapfile)
+def train_twe2(id2word, assigned, tmp="tmp", output="output"):
     print "Generate the temp file...",
-    generate(tassignfile, "%s/train.txt" % tmp, "%s/log.txt" % output, id2word)
+    generate(assigned, "%s/train.txt" % tmp, "%s/log.txt" % output, id2word)
     print "finish!"
     sentences = LineSentence("%s/train.txt" % tmp)
     w = gensim.models.Word2Vec(sentences, size=400, workers=8)
